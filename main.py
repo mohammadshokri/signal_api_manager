@@ -13,8 +13,8 @@ client = Client(api_key, api_secret, api_passphrase)
 
 order= client.get_order('6461f2f509b21c0001f9d6b3')
 print(order)
-# order= client.cancel_order('6461f2f509b21c0001f9d6b3')
-order= client.create_limit_order('SLP-USDT', Client.SIDE_SELL, price='0.0023', size=100)
+order= client.cancel_order('6461fa96a18dbe0001f96c98')
+# order= client.create_limit_order('SLP-USDT', Client.SIDE_SELL, price='0.0023', size=100)
 # '6461fa96a18dbe0001f96c98'
 print(order)
 
