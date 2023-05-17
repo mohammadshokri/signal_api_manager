@@ -2,7 +2,9 @@ import cx_Oracle
 from pathlib import Path
 import os
 from kucoin.client import Client
-# connection for core
+import traceback
+
+from exceptions import  (KucoinAPIException, KucoinRequestException)
 
 def oraConnect():
     os.environ["PATH"] = r"D:\instantclient_21_7;" + os.environ["PATH"]
@@ -28,14 +30,20 @@ def setSignal():
             signalList = dictfetchall(cursor)
             print(signalList)
             for s in signalList:
-
-                client = Client(s['API_KEY'], s['API_SECRET'], s['API_PASSPHRASE'] )
-                client.create_market_order((s[SYMB], client_oid='client_1'+s['ID'], side= Client.SIDE_BUY, price=s['PR_SYM_DB'], size=100)
-                order = client.create_market_order('SLP-USDT', Client.SIDE_BUY,  size=100)
-                cursor.callproc('PRC_UPD_SIG', [s['ID'], 2])
+                try:
+                    client = Client(s['API_KEY'], s['API_SECRET'], s['API_PASSPHRASE'] )
+                    print(s['SYMB'])
+                    print('client_'+ str(s['ID']))
+                    print(s['PR_SYM_DB'])
+                    print(s['AMOUNT'])
+                    order=client.create_limit_order(symbol='SLP-USDT', client_oid='client_'+ str(s['ID']), side= Client.SIDE_BUY, price=0.002, size=0.11)
+                    # order=client.create_limit_order(symbol=s['SYMB'], client_oid='client_'+ str(s['ID']), side= Client.SIDE_BUY, price=s['PR_SYM_DB'], size=0.00001)
+                    # cursor.callproc('PRC_UPD_SIG', [s['ID'], 2, ])
+                    print(order)
+                except Exception as e:
+                    print(traceback.format_exc())
+                    cursor.callproc('PRC_UPD_SIG', [s['ID'], 4, 'client_'+ str(s['ID']), traceback.format_exc()[:3900]])
         except:
-            print("error ")
-            cursor.callproc('PRC_UPD_SIG', [s['ID'], 4])
-
+            print('General error ')
 
 
